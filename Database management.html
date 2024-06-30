@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        button {
+            width: 33.3%;
+            align-self: center;
+            border: 1px solid;
+        }
+
+        button:hover {
+            background-color: rgb(185, 223, 185);
+            cursor: pointer;
+        }
+
+        div {
+            background-color: rgb(224, 224, 243);
+        }
+
+        .inputName {
+            margin-right: 100px;
+        }
+
+        
+        #header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 300px;
+        }
+
+        .other-data {
+            background-color: rgb(115, 223, 223) 86, 223;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .todo-container {
+            display: none;
+            background-color: #fff;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .todo-div {
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .todo-checkbox {
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+
+<body id="body" onload="getAllUsers()">
+
+    <!-- Header section with search input -->
+    <div id="header" class="text-center">
+        <h2 class="mb-3">Search:</h2>
+        <div class="d-flex justify-content-center">
+            <input type="text" id="searchInput" class="form-control mr-2" placeholder="Enter name">
+            <button type="button" class="btn btn-primary" onclick="searchUser()">Search</button>
+        </div>
+    </div>
+    <div id="user-container"></div>
+    <div id="posts-container"></div>
+
+    <script>
+        const urlUsers = "https://jsonplaceholder.typicode.com/users";
+
+        async function getAllUsers() {
+            const resp = await fetch(urlUsers);
+            const users = await resp.json();
+
+            users.forEach((user) => {
+                const newDiv = createUserDiv(user);
+                document.getElementById("user-container").appendChild(newDiv);
+            });
+        }
+
+        function createUserDiv(user) {
+            const newDiv = document.createElement("div");
+            newDiv.classList.add("user-div", "container", "m-3", "p-3", "border", "border-dark");
+            newDiv.style = "width: 50%";
+
+            const spanID = document.createElement("span");
+            spanID.classList.add("btn", "btn-primary", "mr-2");
+            spanID.innerHTML = `ID: ${user.id}`;
+            spanID.addEventListener("click", async () => {
+                const todoContainer = newDiv.querySelector(".todo-container");
+                todoContainer.style.display = todoContainer.style.display === "none" ? "block" : "none";
+                // Fetch todos when the ID is clicked
+                await fetchAndDisplayTodos(user.id);
+            });
+
+            const spanName = document.createElement("span");
+            spanName.classList.add("mr-2");
+            spanName.innerHTML = "Name:";
+
+            const inputName = document.createElement("input");
+            inputName.classList.add("form-control", "mb-2", "mr-sm-2");
+            inputName.defaultValue = user.name;
+
+            const spanEmail = document.createElement("span");
+            spanEmail.classList.add("mr-2");
+            spanEmail.innerHTML = "Email:";
+
+            const inputEmail = document.createElement("input");
+            inputEmail.classList.add("form-control", "mb-2", "mr-sm-2");
+            inputEmail.defaultValue = user.email;
+
+            const divButtons = document.createElement("div");
+            divButtons.classList.add("btn-group");
+
+            const btnOtherData = document.createElement("button");
+            btnOtherData.classList.add("btn", "btn-outline-primary");
+            btnOtherData.innerHTML = "Other Data";
+
+            const btnUpdate = document.createElement("button");
+            btnUpdate.classList.add("btn", "btn-outline-primary");
+            btnUpdate.innerHTML = "Update";
+            btnUpdate.addEventListener("click", () => {
+                
+                alert("User updated!");
+            });
+
+            const btnDelete = document.createElement("button");
+            btnDelete.classList.add("btn", "btn-outline-primary");
+            btnDelete.innerHTML = "Delete";
+            btnDelete.addEventListener("click", () => {
+                
+                newDiv.remove();
+            });
+
+            divButtons.appendChild(btnOtherData);
+            divButtons.appendChild(btnUpdate);
+            divButtons.appendChild(btnDelete);
+
+            newDiv.appendChild(spanID);
+            newDiv.appendChild(spanName);
+            newDiv.appendChild(inputName);
+            newDiv.appendChild(spanEmail);
+            newDiv.appendChild(inputEmail);
+            newDiv.appendChild(divButtons);
+
+            const divOtherData = document.createElement("div");
+            divOtherData.classList.add("other-data", "d-none"); // Hide other data by default
+
+            const spanStreet = document.createElement("span");
+            spanStreet.innerHTML = "Street: ";
+
+            const inputStreet = document.createElement("input");
+            inputStreet.classList.add("form-control", "mb-2", "mr-sm-2");
+            inputStreet.value = user.address.street;
+
+            const spanCity = document.createElement("span");
+            spanCity.innerHTML = "City: ";
+
+            const inputCity = document.createElement("input");
+            inputCity.classList.add("form-control", "mb-2", "mr-sm-2");
+            inputCity.value = user.address.city;
+
+            const spanZipCode = document.createElement("span");
+            spanZipCode.innerHTML = "Zip Code: ";
+
+            const inputZipCode = document.createElement("input");
+            inputZipCode.classList.add("form-control", "mb-2", "mr-sm-2");
+            inputZipCode.value = user.address.zipcode;
+
+            divOtherData.appendChild(spanStreet);
+            divOtherData.appendChild(inputStreet);
+            divOtherData.appendChild(spanCity);
+            divOtherData.appendChild(inputCity);
+            divOtherData.appendChild(spanZipCode);
+            divOtherData.appendChild(inputZipCode);
+
+            btnOtherData.addEventListener("mouseover", () => {
+                divOtherData.classList.remove("d-none");
+            });
+
+            btnOtherData.addEventListener("click", (event) => {
+                event.stopPropagation(); // Prevent the click event from propagating to the parent div
+                divOtherData.classList.add("d-none");
+            });
+
+            newDiv.appendChild(divOtherData);
+
+            // Add container for todos
+            const todoContainer = document.createElement("div");
+            todoContainer.classList.add("todo-container");
+            newDiv.appendChild(todoContainer);
+
+            return newDiv;
+        }
+
+
+        async function fetchAndDisplayTodos(userId) {
+            const todosContainer = document.querySelector(".todo-container");
+            todosContainer.innerHTML = ""; // Clear existing todos
+
+            const resp = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}/todos`);
+            const todos = await resp.json();
+
+            todos.forEach((todo) => {
+                const todoDiv = createTodoDiv(todo);
+                todosContainer.appendChild(todoDiv);
+            });
+        }
+
+        function createTodoDiv(todo) {
+            const todoDiv = document.createElement("div");
+            todoDiv.classList.add("todo-div", "container", "m-3", "p-3", "border", "border-dark");
+
+            const todoCheckbox = document.createElement("input");
+            todoCheckbox.type = "checkbox";
+            todoCheckbox.checked = todo.completed;
+            todoCheckbox.disabled = true;
+            todoCheckbox.classList.add("todo-checkbox");
+
+            const todoTitle = document.createElement("span");
+            todoTitle.innerHTML = todo.title;
+
+            todoDiv.appendChild(todoCheckbox);
+            todoDiv.appendChild(todoTitle);
+
+            return todoDiv;
+        }
+
+        function searchUser() {
+            const searchValue = document.getElementById("searchInput").value.toLowerCase();
+        
+
+            getAllUsersBySearchValue(searchValue);
+        }
+
+        async function getAllUsersBySearchValue(searchValue) {
+            const resp = await fetch(urlUsers);
+            const users = await resp.json();
+
+            const userContainer = document.getElementById("user-container");
+            userContainer.innerHTML = "";
+
+            users.forEach((user) => {
+                const userName = user.name.toLowerCase();
+                const userEmail = user.email.toLowerCase();
+                if (userName.includes(searchValue) || userEmail.includes(searchValue)) {
+                    const newDiv = createUserDiv(user);
+                    userContainer.appendChild(newDiv);
+                }
+            });
+        }
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
