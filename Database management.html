@@ -5,8 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Search</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/spacelab/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        body {
+            background-color: #d3d3d3; /* Light gray background color */
+        }
+
         button {
             width: 33.3%;
             align-self: center;
@@ -18,15 +23,14 @@
             cursor: pointer;
         }
 
-        div {
-            background-color: rgb(224, 224, 243);
+        div.user-div {
+            background-color: #f8f9fa; /* Light gray background color for user divs */
         }
 
         .inputName {
             margin-right: 100px;
         }
 
-        
         #header {
             background-color: #f8f9fa;
             padding: 10px;
@@ -38,7 +42,7 @@
         }
 
         .other-data {
-            background-color: rgb(115, 223, 223) 86, 223;
+            background-color: #d3d3d3; /* Light gray background color */
             padding: 10px;
             margin-top: 10px;
         }
@@ -59,7 +63,6 @@
         .todo-checkbox {
             margin-right: 10px;
         }
-
     </style>
 </head>
 
@@ -70,7 +73,9 @@
         <h2 class="mb-3">Search:</h2>
         <div class="d-flex justify-content-center">
             <input type="text" id="searchInput" class="form-control mr-2" placeholder="Enter name">
-            <button type="button" class="btn btn-primary" onclick="searchUser()">Search</button>
+            <button type="button" class="btn btn-primary" onclick="searchUser()">
+                <i class="fas fa-search"></i> Search
+            </button>
         </div>
     </div>
     <div id="user-container"></div>
@@ -96,12 +101,12 @@
 
             const spanID = document.createElement("span");
             spanID.classList.add("btn", "btn-primary", "mr-2");
-            spanID.innerHTML = `ID: ${user.id}`;
+            spanID.innerHTML = `<i class="fas fa-id-badge"></i> ID: ${user.id}`;
             spanID.addEventListener("click", async () => {
                 const todoContainer = newDiv.querySelector(".todo-container");
                 todoContainer.style.display = todoContainer.style.display === "none" ? "block" : "none";
                 // Fetch todos when the ID is clicked
-                await fetchAndDisplayTodos(user.id);
+                await fetchAndDisplayTodos(user.id, todoContainer);
             });
 
             const spanName = document.createElement("span");
@@ -125,21 +130,19 @@
 
             const btnOtherData = document.createElement("button");
             btnOtherData.classList.add("btn", "btn-outline-primary");
-            btnOtherData.innerHTML = "Other Data";
+            btnOtherData.innerHTML = '<i class="fas fa-info-circle"></i> Other Data';
 
             const btnUpdate = document.createElement("button");
             btnUpdate.classList.add("btn", "btn-outline-primary");
-            btnUpdate.innerHTML = "Update";
+            btnUpdate.innerHTML = '<i class="fas fa-edit"></i> Update';
             btnUpdate.addEventListener("click", () => {
-                
                 alert("User updated!");
             });
 
             const btnDelete = document.createElement("button");
             btnDelete.classList.add("btn", "btn-outline-primary");
-            btnDelete.innerHTML = "Delete";
+            btnDelete.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
             btnDelete.addEventListener("click", () => {
-                
                 newDiv.remove();
             });
 
@@ -204,17 +207,15 @@
             return newDiv;
         }
 
-
-        async function fetchAndDisplayTodos(userId) {
-            const todosContainer = document.querySelector(".todo-container");
-            todosContainer.innerHTML = ""; // Clear existing todos
+        async function fetchAndDisplayTodos(userId, todoContainer) {
+            todoContainer.innerHTML = ""; // Clear existing todos
 
             const resp = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}/todos`);
             const todos = await resp.json();
 
             todos.forEach((todo) => {
                 const todoDiv = createTodoDiv(todo);
-                todosContainer.appendChild(todoDiv);
+                todoContainer.appendChild(todoDiv);
             });
         }
 
@@ -239,8 +240,6 @@
 
         function searchUser() {
             const searchValue = document.getElementById("searchInput").value.toLowerCase();
-        
-
             getAllUsersBySearchValue(searchValue);
         }
 
@@ -261,8 +260,7 @@
             });
         }
     </script>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
