@@ -1,4 +1,5 @@
 User Search Web App
+
 This project is a user search and management web application designed with HTML, CSS, JavaScript, and Bootstrap. It utilizes JSONPlaceholder's REST API to fetch user data and display it in a visually organized, searchable format. Key features include:
 
 1. Search Functionality: Allows users to search by name or email, filtering the user list in real time.
